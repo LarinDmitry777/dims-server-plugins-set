@@ -120,7 +120,7 @@
 + `tpto <имя игрока>` - аналогично `call`
 + `tpa <имя игрока` - подтверждение телепортации
 
-Значение в `config.json` - `pToPlayerTool`
+Значение в `config.json` - `tpToPlayerTool`
 
 Необходимо добавить в `commands.yml`:
 ```yml
