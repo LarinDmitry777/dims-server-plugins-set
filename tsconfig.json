@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonJs",
+    "lib": ["es2015", "es2018.promise"],
+    "removeComments": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "alwaysStrict": true,
+    "outDir": "./build",
+    "resolveJsonModule": true,
+    "rootDir": "src",
+    "experimentalDecorators": true,
+    "types": ["@scriptcraft/types", "@types/jasmine"],
+    "typeRoots": [
+      "./@types"
+    ]
+  },
+  "exclude": ["typings"]
+}

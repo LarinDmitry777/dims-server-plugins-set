@@ -1,0 +1,29 @@
+{
+  "name": "minecraft-statistic-plugin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "rimraf ./build && npm run build:ts && npm run build:json",
+    "build:ts": "tsc",
+    "build:json": "cd ./src; for i in `ls -d */`; do cp $i/config.json ./../build/$i/config.json; done; cd ..\n",
+    "lint": "eslint 'src/**/*.ts'",
+    "lint:fix": "eslint 'src/**/*.ts' --fix"
+  },
+  "dependencies": {
+    "@magikcraft/core": "^0.2.0",
+    "@magikcraft/op-all": "^1.0.0",
+    "@scriptcraft/types": "^1.3.2",
+    "@types/jasmine": "^3.5.10",
+    "rimraf": "^3.0.2",
+    "typescript": "^3.8.3"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.31.0",
+    "@typescript-eslint/parser": "^2.31.0",
+    "eslint": "^7.0.0"
+  }
+}

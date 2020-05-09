@@ -1,0 +1,23 @@
+{
+  "bedTpTool": {
+    "isWork": true,
+    "diamondsCost": 1
+  },
+  "spawnTpTool": {
+    "isWork": true,
+    "diamondsCost": 1
+  },
+  "homeTpTool": {
+    "isWork": true,
+    "setHomeDiamondsCost": 5,
+    "tpDiamondsCost": 2
+  },
+  "tpToPlayerTool": {
+    "isWork": true,
+    "diamondsCost": 1
+  },
+  "deathTpTool": {
+    "isWork": true,
+    "diamondsCost": 15
+  }
+}
