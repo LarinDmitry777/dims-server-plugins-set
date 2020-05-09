@@ -1,4 +1,5 @@
 import { commando } from '../../typePatch';
+
 import { takeDiamondAccordingToPlayerStatus } from './additional';
 import strings from './strings';
 
@@ -17,16 +18,18 @@ export default class BedTpTool {
     }
 
     private static bedCommandHandler(_args: string[], player: Player): void {
-        if (!player.getBedSpawnLocation()) {
+        const bedSpawnLocation = player.getBedSpawnLocation();
+
+        if (!bedSpawnLocation) {
             echo(player, strings.playerHasNoBed);
             return;
         }
 
-        if (!takeDiamondAccordingToPlayerStatus(player, BedTpTool.diamondsCost)) {
+        if (!takeDiamondAccordingToPlayerStatus(player, BedTpTool.diamondsCost, true)) {
             return;
         }
 
-        player.teleport(player.getBedSpawnLocation());
+        player.teleport(bedSpawnLocation);
         echo(player, strings.playerTpToBed);
     }
 }

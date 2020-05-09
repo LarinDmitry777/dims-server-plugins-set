@@ -1,11 +1,14 @@
 import * as utils from 'utils';
 import { player } from 'utils';
+import { commando } from '../../typePatch';
+
 import strings from './strings';
 import {
-    isPlayerOnline, isPlayerHasEnoughDiamondsInHand, takeDiamondsFromHand, indexOfObjectFromArray,
+    isPlayerOnline,
+    isPlayerHasEnoughDiamondsInHand,
+    takeDiamondsFromHand,
+    indexOfObjectFromArray,
 } from './additional';
-
-import { commando } from '../../typePatch';
 
 interface TpRequest {
     playerName: string;
@@ -17,30 +20,30 @@ interface TpCallsContainer {
 }
 
 export default class TpToPlayerTool {
-    private tpCalls: TpCallsContainer = {};
+    private static tpCalls: TpCallsContainer = {};
+    private static tpWaitTimeMillis = 45 * 1000;
+    private static diamondsCost: number;
+    private static isInit = false;
 
-    private readonly tpWaitTimeMillis = 45 * 1000;
+    static init(diamondsCost: number) {
+        if (TpToPlayerTool.isInit) {
+            return;
+        }
+        TpToPlayerTool.isInit = true;
 
-    private readonly diamondsCost: number;
+        TpToPlayerTool.diamondsCost = diamondsCost;
 
-    constructor(diamondsCost: number) {
-        this.diamondsCost = diamondsCost;
-
-        // Вынужденная мера, так как для MagikCraft важно название функции.
-        // Если функция является членом класса, то транспиляция меняет поле name.
-        this.tpto = this.tpto.bind(this);
-        commando(this.tpto, utils.players().map((p) => p.name));
-
-        this.tpa = this.tpa.bind(this);
-        commando(this.tpa, utils.players().map((p) => p.name));
+        commando('call', TpToPlayerTool.callHandler);
+        commando('tpa', TpToPlayerTool.tpaHandler);
     }
 
-    private createTpCallRequest(fromPlayerName: string, toPlayerName: string): boolean {
-        let playersTpCalls = this.tpCalls[toPlayerName];
+    private static createTpCallRequest(fromPlayerName: string, toPlayerName: string): boolean {
+        let playersTpCalls = TpToPlayerTool.tpCalls[toPlayerName];
         if (playersTpCalls === undefined) {
             playersTpCalls = [];
-            this.tpCalls[toPlayerName] = playersTpCalls;
+            TpToPlayerTool.tpCalls[toPlayerName] = playersTpCalls;
         }
+
         const callRequestIndex = indexOfObjectFromArray(playersTpCalls, 'playerName', fromPlayerName);
         if (callRequestIndex !== -1) {
             playersTpCalls[callRequestIndex].date = Date.now();
@@ -55,8 +58,8 @@ export default class TpToPlayerTool {
         return true;
     }
 
-    private isHasTpRequest(toPlayerName: string, fromPlayerName: string): boolean {
-        const playersTpCalls = this.tpCalls[toPlayerName];
+    private static isHasTpRequest(toPlayerName: string, fromPlayerName: string): boolean {
+        const playersTpCalls = TpToPlayerTool.tpCalls[toPlayerName];
         if (!Array.isArray(playersTpCalls)) {
             return false;
         }
@@ -69,24 +72,25 @@ export default class TpToPlayerTool {
         const tpRequest = playersTpCalls[tpRequestIndex];
         const tpDate = tpRequest.date;
 
-        if (Date.now() > tpDate + this.tpWaitTimeMillis) {
-            this.removeTpRequest(toPlayerName, fromPlayerName);
+        if (Date.now() > tpDate + TpToPlayerTool.tpWaitTimeMillis) {
+            TpToPlayerTool.removeTpRequest(toPlayerName, fromPlayerName);
             return false;
         }
 
         return true;
     }
 
-    private removeTpRequest(toPlayerName: string, fromPlayerName: string): void {
-        const playersTpCalls = this.tpCalls[toPlayerName];
+    private static removeTpRequest(toPlayerName: string, fromPlayerName: string): void {
+        const playersTpCalls = TpToPlayerTool.tpCalls[toPlayerName];
         if (!Array.isArray(playersTpCalls)) {
             return;
         }
+
         const indexOfRequest = indexOfObjectFromArray(playersTpCalls, 'playerName', fromPlayerName);
         playersTpCalls.splice(indexOfRequest, 1);
     }
 
-    private readonly tpto = function tpto(params: string[], sender: Player): void {
+    private static callHandler(params: string[], sender: Player) {
         const playerName = params[0];
         if (playerName === undefined) {
             echo(sender, strings.typePlayerNameForTp);
@@ -100,8 +104,12 @@ export default class TpToPlayerTool {
             echo(sender, strings.playerNotFound);
             return;
         }
+        if (!isPlayerHasEnoughDiamondsInHand(sender, TpToPlayerTool.diamondsCost)) {
+            echo(sender, `${strings.youNeedDiamondsInHand} ${TpToPlayerTool.diamondsCost}`);
+            return;
+        }
 
-        const isPersistSend = this.createTpCallRequest(sender.name, playerName);
+        const isPersistSend = TpToPlayerTool.createTpCallRequest(sender.name, playerName);
         if (isPersistSend) {
             echo(sender, `${strings.tpRequestSendFromPlayer} ${playerName}`);
             echo(player(playerName), `${strings.tpRequestSendToPlayer} ${sender.name}`);
@@ -110,13 +118,13 @@ export default class TpToPlayerTool {
         }
     }
 
-    private readonly tpa = function tpa(params: string[], sender: Player) {
+    private static tpaHandler(params: string[], sender: Player) {
         const playerName = params[0];
         if (playerName === undefined) {
             echo(sender, strings.typePlayerNameForTp);
             return;
         }
-        if (!this.isHasTpRequest(sender.name, playerName)) {
+        if (!TpToPlayerTool.isHasTpRequest(sender.name, playerName)) {
             echo(sender, strings.tpRequestNotFound);
             return;
         }
@@ -124,22 +132,24 @@ export default class TpToPlayerTool {
             echo(sender, strings.playerNotFound);
             return;
         }
-        if (!isPlayerHasEnoughDiamondsInHand(sender, this.diamondsCost)) {
-            echo(sender, `${strings.youNeedDiamondsInHand} ${this.diamondsCost}`);
+        if (!isPlayerHasEnoughDiamondsInHand(sender, TpToPlayerTool.diamondsCost)) {
+            echo(sender, `${strings.youNeedDiamondsInHand} ${TpToPlayerTool.diamondsCost}`);
             return;
         }
-        if (!isPlayerHasEnoughDiamondsInHand(player(playerName), this.diamondsCost)) {
+        if (!isPlayerHasEnoughDiamondsInHand(player(playerName), TpToPlayerTool.diamondsCost)) {
             echo(player(playerName), `${strings.tpToPlayerError} ${playerName}`);
             echo(sender, `${strings.tpToPlayerError} ${playerName}`);
             return;
         }
 
-        this.removeTpRequest(sender.name, playerName);
-        takeDiamondsFromHand(sender, this.diamondsCost);
-        takeDiamondsFromHand(player(playerName), this.diamondsCost);
+        TpToPlayerTool.removeTpRequest(sender.name, playerName);
+        takeDiamondsFromHand(sender, TpToPlayerTool.diamondsCost);
+        takeDiamondsFromHand(player(playerName), TpToPlayerTool.diamondsCost);
         player(playerName).teleport(sender);
 
         echo(sender, strings.tpToPlayerOk);
+        echo(sender, `${strings.diamondsSpentCost} ${TpToPlayerTool.diamondsCost}`);
         echo(player(playerName), strings.tpToPlayerOk);
+        echo(player(playerName), `${strings.diamondsSpentCost} ${TpToPlayerTool.diamondsCost}`);
     }
 }

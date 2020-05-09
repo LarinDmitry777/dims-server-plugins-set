@@ -1,9 +1,9 @@
 export default {
-    commonPlayerExecAdminCommandException: 'Доступ к этой команде имеют только администраторы.',
-    playerHasNoBed: 'У вас нет кровати или она уничтожена.',
-    playerHasNoHome: 'У вас нет дома.',
-    homeCreated: 'Точка дома создана.',
-    playerTpToHome: 'Добро пожаловать домой.',
+    commonPlayerExecAdminCommandException: 'Доступ к этой команде имеют только администраторы',
+    playerHasNoBed: 'У вас нет кровати или она уничтожена',
+    playerHasNoHome: 'У вас нет дома',
+    homeCreated: 'Точка дома создана',
+    playerTpToHome: 'Добро пожаловать домой',
     playerTpToBed: 'Вы перемещены к кровати',
     youNeedDiamondsInHand: 'Количество алмазов в руке, необходимое для выполнения команды:',
     playerHasNoDeathPoint: 'Точка смерти не найдена',
@@ -18,4 +18,6 @@ export default {
     tpRequestNotFound: 'Запрос на телепортацию не найден или устарел',
     tpToPlayerError: 'Телепортация не произошла. Необходимы алмазы в руке для:',
     tpToPlayerOk: 'Телепортация завершена успешно',
+    diamondsSpentCost: 'Алмазов потрачено:',
+    wrongSyntax: 'Неверный синтаксис'
 };

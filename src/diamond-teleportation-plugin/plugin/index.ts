@@ -39,7 +39,7 @@ if (config.homeTpTool.isWork) {
     );
 }
 if (config.tpToPlayerTool.isWork) {
-    new TpToPlayerTool(config.tpToPlayerTool.diamondsCost);
+    TpToPlayerTool.init(config.tpToPlayerTool.diamondsCost);
 }
 if (config.deathTpTool.isWork) {
     DeathTpTool.init(config.deathTpTool.diamondsCost);

@@ -1,7 +1,7 @@
 import * as events from 'events';
 import { locationFromJSON, locationToJSON } from 'utils';
-
 import { commando } from '../../typePatch';
+
 import { takeDiamondAccordingToPlayerStatus } from './additional';
 import strings from './strings';
 
@@ -28,7 +28,7 @@ export default class DeathTpTool {
             return;
         }
 
-        if (!takeDiamondAccordingToPlayerStatus(player, DeathTpTool.diamondsCost)) {
+        if (!takeDiamondAccordingToPlayerStatus(player, DeathTpTool.diamondsCost, true)) {
             return;
         }
 
@@ -38,7 +38,9 @@ export default class DeathTpTool {
 
     private static getPlayerDeathPoint(player: Player): Location | undefined {
         const deathJson = DeathTpTool.deathPointPersist[player.name];
-        return deathJson !== undefined ? locationFromJSON(deathJson) : undefined;
+        return deathJson !== undefined
+            ? locationFromJSON(deathJson)
+            : undefined;
     }
 
     private static playerDeathEventHandler(event: PlayerDeathEvent): void {

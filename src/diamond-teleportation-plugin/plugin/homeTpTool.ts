@@ -1,18 +1,21 @@
 import { locationFromJSON, locationToJSON } from 'utils';
 import { commando } from '../../typePatch';
+
 import { takeDiamondAccordingToPlayerStatus } from './additional';
 import strings from './strings';
 
 export default class HomeTpTool {
-    private static homesPersistName = 'homes.json';
-
-    private static homesPersist = persist(HomeTpTool.homesPersistName);
-
+    private static homesPersist = persist('homesPoints');
     private static setHomeDiamondsCost: number;
-
     private static tpDiamondsCost: number;
+    private static isInit = false;
 
     static init(setHomeDiamondsCost: number, tpDiamondsCost: number) {
+        if (HomeTpTool.isInit) {
+            return;
+        }
+        HomeTpTool.isInit = true;
+
         HomeTpTool.tpDiamondsCost = tpDiamondsCost;
         HomeTpTool.setHomeDiamondsCost = setHomeDiamondsCost;
 
@@ -20,25 +23,35 @@ export default class HomeTpTool {
         commando('home', HomeTpTool.homeHandler);
     }
 
-    private static setHomeHandler(_args: string[], player: Player): void {
-        if (!takeDiamondAccordingToPlayerStatus(player, HomeTpTool.setHomeDiamondsCost)) {
+    private static setHomeHandler(args: string[], player: Player): void {
+        if (args.length > 0) {
+            echo(player, strings.wrongSyntax);
+            return;
+        }
+
+        if (!takeDiamondAccordingToPlayerStatus(player, HomeTpTool.setHomeDiamondsCost, true)) {
             return;
         }
 
         HomeTpTool.homesPersist[player.name] = locationToJSON(player.getLocation());
-        // eslint-disable-next-line no-undef
         echo(player, strings.homeCreated);
     }
 
-    private static homeHandler(_args: string[], player: Player): void {
+    private static homeHandler(args: string[], player: Player): void {
+        if (args.length > 0) {
+            echo(player, strings.wrongSyntax);
+            return;
+        }
+
         if (HomeTpTool.homesPersist[player.name] === undefined) {
-        // eslint-disable-next-line no-undef
             echo(player, strings.playerHasNoHome);
             return;
         }
-        if (!takeDiamondAccordingToPlayerStatus(player, HomeTpTool.tpDiamondsCost)) {
+
+        if (!takeDiamondAccordingToPlayerStatus(player, HomeTpTool.tpDiamondsCost, true)) {
             return;
         }
+
         player.teleport(locationFromJSON(HomeTpTool.homesPersist[player.name]));
         echo(player, strings.playerTpToHome);
     }
