@@ -1,0 +1,16 @@
+{
+  "players": ["eswat", "Gidron1", "steelbreedman"],
+  "ebanTool": {
+    "isWork": true,
+    "prison": {
+      "x": -231,
+      "y": 60,
+      "z": -202
+    },
+    "freedom": {
+      "x": -228,
+      "y": 60,
+      "z": -202
+    }
+  }
+}
