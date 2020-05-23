@@ -44,6 +44,10 @@ export default class DeathTpTool {
     }
 
     private static playerDeathEventHandler(event: PlayerDeathEvent): void {
+        if (event.getEntity().getType().getName() !== 'player') {
+            return;
+        }
+
         DeathTpTool.deathPointPersist[event.getEntity().name] = locationToJSON(event
             .getEntity().getLocation());
     }

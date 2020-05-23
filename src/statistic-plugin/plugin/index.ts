@@ -8,5 +8,5 @@ interface Config {
 const config: Config = require('../config.json');
 
 if (config.isWork) {
-    new StatisticPlugin(config.savePersistIntervalSec);
+    StatisticPlugin.init(config.savePersistIntervalSec);
 }

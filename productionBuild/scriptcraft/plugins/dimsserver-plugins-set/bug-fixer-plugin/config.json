@@ -1,0 +1,5 @@
+{
+  "lostItemInCursorAfterDisconnect": true,
+  "lostVehicleAfterDisconnect": true,
+  "tpToDeath": true
+}
